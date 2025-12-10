@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: #0a0a0a;
+      color: white;
+      overflow: hidden;
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+.albums-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 30px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.album-item {
+  text-align: left;
+  cursor: pointer;
+}
+
+.album-item img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.album-item img:hover {
+  transform: scale(1.05);
+}
+
+.album-item h4 {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #fff;
+}
+
+.album-item p {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: #b3b3b3;
+}
+
+
+    .sidebar {
+  width: 230px;
+  background-color: #242424;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+  padding: 12px;
+}
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+
+    .search {
+      background-color: #333;
+      border: none;
+      color: #ccc;
+      padding: 8px 10px;
+      border-radius: 4px;
+      width: 100%;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-decoration: none;
+  color: white;
+  transition: background 0.15s;
+}
+.menu-item:hover {
+  background-color: #2f2f2f;
+}
+
+.category-title {
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #c4c4c4;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.menu-item i {
+  font-size: 18px;
+  width: 22px;
+  color: #007483; 
+}
+.sidebar-footer {
+  padding-top: 6px;
+}
+
+.sidebar-footer .copyright {
+  font-size: 11px;
+  color: #aaaaaa;
+  text-align: center;
+  padding: 6px 0;
+}
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #171717;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #051923;
+      padding: 10px 20px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .controls i {
+      font-size: 18px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .song-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .song-title {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .song-artist {
+      font-size: 12px;
+      color: #b3b3b3;
+    }
+
+    .volume {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .volume input {
+      accent-color: white;
+    }
+
+    .search-bar {
+      background-color: #3f3e3e;
+      border: none;
+      height: 32px;
+      width: 180px;
+      border-radius: 4px;
+      padding: 0 8px;
+      color: white;
+    }
+
+    .profile-container {
+      position: relative;
+    }
+
+    .profile-btn {
+      background-color: #2e2e2e;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-weight: 500;
+    }
+
+    .profile-btn:hover {
+      background-color: #3d3d3d;
+    }
+
+    .profile-btn i {
+      font-size: 18px;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      min-width: 160px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      overflow: hidden;
+      z-index: 20;
+    }
+
+    .dropdown a {
+      display: block;
+      color: white;
+      padding: 10px 14px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .dropdown a:hover {
+      background-color: #333;
+    }
+
+    .content {
+      padding: 20px 30px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      text-align: center
+    }
+
+    .album-scroll {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      scrollbar-width: thin;
+      scroll-behavior: smooth;
+      padding-bottom: 10px;
+      scrollbar-color: #1a1a1a #121212;
+      scrollbar-width: none; 
+    }
+
+    .album-scroll::-webkit-scrollbar {
+      height: 0; 
+      background: transparent;
+    }
+
+    .album-scroll::-webkit-scrollbar-thumb {
+       background: transparent;
+    }
+
+    .album-card {
+      flex: 0 0 auto;
+      width: 220px;
+      background-color: #1f1f1f;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, background 0.25s;
+    }
+
+    .album-card:hover {
+      background-color: #2a2a2a;
+      transform: scale(1.05);
+    }
+
+    .album-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+
+    .album-info {
+      padding: 10px;
+    }
+
+    .album-title {
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .album-artist {
+      font-size: 13px;
+      color: #b3b3b3;
+    }
+
+    .scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 5;
+    }
+
+    .scroll-btn:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    .section:hover .scroll-btn {
+      opacity: 1;
+    }
+
+    .scroll-left {
+      left: -10px;
+    }
+
+    .scroll-right {
+      right: -10px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+      .search-bar {
+        width: 120px;
+      }
+      .album-card {
+        width: 160px;
+      }
+      .scroll-btn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+   <aside class="sidebar">
+  <div class="sidebar-top">
+    <input type="text" placeholder="Search" class="search" />
+
+    <div class="menu">
+      <a href="main.html" class="menu-item"><i class="fa-solid fa-heart"></i> For You</a>
+      <a href="categories.html" class="menu-item"><i class="fa-solid fa-music"></i> Browse</a>
+
+      <h4 class="category-title">Library</h4>
+      <a href="recentlyadded.html" class="menu-item"><i class="fa-solid fa-clock-rotate-left"></i> Recently Added</a>
+      <a href="artists.html" class="menu-item"><i class="fa-solid fa-user"></i> Artists</a>
+      <a href="albums.html" class="menu-item"><i class="fa-solid fa-compact-disc"></i> Albums</a>
+
+      <h4 class="category-title">Playlists</h4>
+      <a href="playlists.html" class="menu-item"><i class="fa-solid fa-table-cells-large"></i> All Playlists</a>
+      <a href="favourites.html" class="menu-item"><i class="fa-solid fa-star"></i> Favourite Songs</a>
+      <a href="domiland.html" class="menu-item"><i class="fa-solid fa-list"></i> DomiLand</a>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="copyright">© Copyright 2025. All rights reserved.</div>
+  </div>
+</aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="controls">
+          <i class="fa-solid fa-shuffle"></i>
+          <i class="fa-solid fa-backward-step"></i>
+          <i class="fa-solid fa-play"></i>
+          <i class="fa-solid fa-forward-step"></i>
+          <i class="fa-solid fa-repeat"></i>
+        </div>
+
+        <div class="song-info">
+          <div class="song-title"></div>
+          <div class="song-artist"></div>
+        </div>
+
+
+        <div class="volume">
+          <i class="fa-solid fa-volume-high"></i>
+          <input type="range" min="0" max="100" value="80">
+        </div>
+
+        <div class="profile-container">
+          <button class="profile-btn" id="profileBtn">
+            <i class="fa-solid fa-user"></i>
+            <i class="fa-solid fa-caret-down"></i>
+          </button>
+          <div class="dropdown" id="dropdownMenu">
+            <a href="welcome.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="content">
+        <div class="section">
+          <div class="section-title">Albums</div>
+            <div class="albums-container">
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music/v4/80/81/f6/8081f6ae-1232-c9a3-c84c-a1b047068195/am_am_packshot_11july.jpg/592x592bf.webp" alt="AM">
+    <h4>AM</h4>
+    <p>Arctic Monkeys</p>
+  </div>
+
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ee/75/9b/ee759b5d-c7be-a7ca-69bc-a5b0262e3dbe/198846894720.jpg/592x592bf.webp" alt="BOLSHIE KURTKI">
+    <h4>BOLSHIE KURTKI</h4>
+    <p>SALUKI</p>
+  </div>
+
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/41/db/3e/41db3e56-15d6-7677-dba2-7b94e6dff740/195081197326.jpg/592x592bf.webp" alt="B.I.D">
+    <h4>B.I.D</h4>
+    <p>Markul</p>
+  </div>
+
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/1a/64/ac/1a64ac23-02e6-72e9-2774-e64f09047a6f/cover.jpg/592x592bf.webp" alt="Скучаю, Но Работаю">
+    <h4>Скучаю, Но Работаю</h4>
+    <p>OG BUDA</p>
+  </div>
+  
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/33/26/5b/33265b00-0be6-8552-0996-2832eba35b31/cover.jpg/592x592bf.webp" alt="10:13">
+    <h4>10:13</h4>
+    <p>PHARAOH</p>
+  </div>
+<div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/66/3f/63/663f6373-8b46-e8a1-2b30-f049bb68eba3/198588909928.jpg/592x592bf.webp" alt="Seashell Cassette - EP">
+    <h4>Seashell Cassette - EP</h4>
+    <p>hanbee</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/36/e3/8e/36e38e7e-94ec-dbcd-f23c-0890e1a9518f/22UM1IM44821.rgb.jpg/592x592bf.webp" alt="NEVER ENOUGH">
+    <h4>NEVER ENOUGH</h4>
+    <p>Daniel Caeser</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/8a/6e/aa/8a6eaa9a-02ac-db51-c300-788936792634/196292487671.jpg/592x592bf.webp" alt="Sense Of Human">
+    <h4>Sense Of Human</h4>
+    <p>Markul</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ac/e1/3b/ace13b23-6ce7-ce4c-5806-c4247b0ca7d7/195497679072.jpg/592x592bf.webp" alt="Great Depression">
+    <h4>Great Depression</h4>
+    <p>Markul</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/d1/b0/31/d1b031f2-5aaf-1dd6-05d3-a3a63b5e44f5/195497992447.jpg/592x592bf.webp" alt="Бумеранг">
+    <h4>Бумеранг</h4>
+    <p>Markul</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/65/2e/20/652e2023-f6f0-9596-3465-b5be42597d4f/cover.jpg/592x592bf.webp" alt="Баланс">
+    <h4>Баланс</h4>
+    <p>SOULOUD</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a5/29/7d/a5297d57-df64-6ff5-775f-f803a3c43333/0.jpg/592x592bf.webp" alt="ФУТУРОАРХАИКА">
+    <h4>ФУТУРОАРХАИКА</h4>
+    <p>Boulevard Depo</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/4e/9f/7b/4e9f7b71-28ad-a8dc-9b34-da532feb82f6/196871937382.jpg/592x592bf.webp" alt="WE DON'T TRUST YOU">
+    <h4>WE DON'T TRUST YOU</h4>
+    <p>Future, Metro Boomin</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/6a/dd/dc/6adddc59-2b24-2c72-b756-52f51809ac4f/cover.jpg/592x592bf.webp" alt="WE LIVE ONLY ONCE">
+    <h4>WE LIVE ONLY ONCE</h4>
+    <p>Aarne, BUSHIDO ZHO</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/d0/9c/f9/d09cf9e2-0f9f-861a-f061-4f18993d814b/197188657208.jpg/592x592bf.webp" alt="WILD EA$T">
+    <h4>WILD EA$T</h4>
+    <p>SALUKI</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/09/7d/b0/097db06f-8403-3cf7-7510-139e570ca66b/196871341882.jpg/592x592bf.webp" alt="UTOPIA">
+    <h4>UTOPIA</h4>
+    <p>Travis Scott</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/ed/18/ee/ed18ee33-8aaf-d8b3-2562-0adf76ad0be3/cover.png/592x592bf.webp" alt="SZN">
+    <h4>SZN</h4>
+    <p>OG BUDA</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/5e/2b/c8/5e2bc833-d6cd-f096-cdbd-c47714747192/cover.jpg/592x592bf.webp" alt="Aiga qarap">
+    <h4>Aiga qarap</h4>
+    <p>Sadraddin</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a2/54/79/a25479fd-f29f-4b27-e0b8-335cd2eebc23/199538229417.jpg/592x592bf.webp" alt="Beep Beep">
+    <h4>Beep Beep</h4>
+    <p>hanbee</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/22/3c/5d/223c5d96-501e-040e-a34d-0608e6e5c4ff/075679638434.jpg/592x592bf.webp" alt="HARDSTONE PSYCHO">
+    <h4>HARDSTONE PSYCHO</h4>
+    <p>Don Toliver</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/5e/f5/69/5ef569a3-f3ec-b8cf-f5df-e356a55f52d0/198846931487.jpg/592x592bf.webp" alt="MAKE DEPRESSION GREAT AGAIN">
+    <h4>MAKE DEPRESSION GREAT AGAIN</h4>
+    <p>Markul</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/75/4d/60/754d6037-096b-1467-5e86-292d4bf12a1f/196872461367.jpg/592x592bf.webp" alt="MIXTAPE PLUTO">
+    <h4>MIXTAPE PLUTO</h4>
+    <p>Future</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/b4/6c/a7/b46ca785-291a-bed5-82d1-0856b20dc762/195081902661.jpg/592x592bf.webp" alt="Phantom">
+    <h4>Phantom</h4>
+    <p>Markul</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/02/4f/96/024f9674-1306-b7f4-08f1-0264bad33bee/198846742533.jpg/592x592bf.webp" alt="Осадки">
+    <h4>Осадки</h4>
+    <p>Markul</p>
+  </div>
+  <div class="album-item">
+    <img src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/30/66/90/306690d4-2a29-402e-e406-6b319ce7731a/886447227169.jpg/592x592bf.webp" alt="ASTROWORLD">
+    <h4>ASTROWORLD</h4>
+    <p>Travis Scott</p>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const dropdown = document.getElementById('dropdownMenu');
+    profileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    });
+    document.addEventListener('click', () => dropdown.style.display = 'none');
+  </script>
+</body>
+</html>

@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: #0a0a0a;
+      color: white;
+      overflow: hidden;
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+  width: 230px;
+  background-color: #242424;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+  padding: 12px;
+}
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+
+    .search {
+      background-color: #333;
+      border: none;
+      color: #ccc;
+      padding: 8px 10px;
+      border-radius: 4px;
+      width: 100%;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-decoration: none;
+  color: white;
+  transition: background 0.15s;
+}
+.menu-item:hover {
+  background-color: #2f2f2f;
+}
+
+
+.menu-item i {
+  font-size: 18px;
+  width: 22px;
+  color: #007483; 
+}
+.category-title {
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #c4c4c4;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.sidebar-footer {
+  padding-top: 6px;
+}
+
+.sidebar-footer .copyright {
+  font-size: 11px;
+  color: #aaaaaa;
+  text-align: center;
+  padding: 6px 0;
+}
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #171717;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #051923;
+      padding: 10px 20px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .controls i {
+      font-size: 18px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .song-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .song-title {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .song-artist {
+      font-size: 12px;
+      color: #b3b3b3;
+    }
+
+    .volume {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .volume input {
+      accent-color: white;
+    }
+
+    .search-bar {
+      background-color: #3f3e3e;
+      border: none;
+      height: 32px;
+      width: 180px;
+      border-radius: 4px;
+      padding: 0 8px;
+      color: white;
+    }
+
+    .profile-container {
+      position: relative;
+    }
+
+    .profile-btn {
+      background-color: #2e2e2e;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-weight: 500;
+    }
+
+    .profile-btn:hover {
+      background-color: #3d3d3d;
+    }
+
+    .profile-btn i {
+      font-size: 18px;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      min-width: 160px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      overflow: hidden;
+      z-index: 20;
+    }
+
+    .dropdown a {
+      display: block;
+      color: white;
+      padding: 10px 14px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .dropdown a:hover {
+      background-color: #333;
+    }
+
+    .content {
+      padding: 20px 30px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+
+    .album-scroll {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      scrollbar-width: thin;
+      scroll-behavior: smooth;
+      padding-bottom: 10px;
+      scrollbar-color: #1a1a1a #121212;
+      scrollbar-width: none; 
+    }
+
+    .album-scroll::-webkit-scrollbar {
+      height: 0; 
+      background: transparent;
+    }
+
+    .album-scroll::-webkit-scrollbar-thumb {
+       background: transparent;
+    }
+
+    .album-card {
+      flex: 0 0 auto;
+      width: 220px;
+      background-color: #1f1f1f;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, background 0.25s;
+    }
+
+    .album-card:hover {
+      background-color: #2a2a2a;
+      transform: scale(1.05);
+    }
+
+    .album-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+
+    .album-info {
+      padding: 10px;
+    }
+
+    .album-title {
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .album-artist {
+      font-size: 13px;
+      color: #b3b3b3;
+    }
+
+    .scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 5;
+    }
+
+    .scroll-btn:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    .section:hover .scroll-btn {
+      opacity: 1;
+    }
+
+    .scroll-left {
+      left: -10px;
+    }
+
+    .scroll-right {
+      right: -10px;
+    }
+.playlist-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+.playlist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.playlist-cover {
+  flex: 0 0 250px;
+  max-width: 250px;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.playlist-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.playlist-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.playlist-updated {
+  color: #777;
+  margin: 10px 0 30px;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.play-btn,
+.shuffle-btn {
+  background-color: rgb(0, 116, 131);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 12px 26px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.2s;
+}
+
+.shuffle-btn {
+  background-color: rgb(0, 116, 131);;
+}
+
+.play-btn:hover,
+.shuffle-btn:hover {
+  opacity: 0.85;
+}
+
+.song-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.add-btn,
+.more-btn {
+  background-color: #f9f9f9;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #ef4444;
+  transition: 0.2s;
+}
+
+.add-btn:hover,
+.more-btn:hover {
+  background-color: #f3f3f3;
+}
+
+.song-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.song-table th {
+  color: #888;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.song-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f3f3f3;
+  vertical-align: middle;
+  font-weight: 500;
+}
+
+.song-table th:nth-child(1),
+.song-table td:nth-child(1) {
+  width: 45%;
+}
+
+.song-table th:nth-child(2),
+.song-table td:nth-child(2) {
+  width: 35%;
+}
+
+.song-table th:nth-child(3),
+.song-table td:nth-child(3) {
+  width: 20%;
+  text-align: right;
+}
+
+.song-table tr:hover {
+  background-color: #bab5b5;
+  transition: 0.2s;
+}
+
+.song-cover {
+  width: 45px;
+  height: 45px;
+  border-radius: 6px;
+  object-fit: cover;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+      .search-bar {
+        width: 120px;
+      }
+      .album-card {
+        width: 160px;
+      }
+      .scroll-btn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+   <aside class="sidebar">
+  <div class="sidebar-top">
+    <input type="text" placeholder="Search" class="search" />
+
+    <div class="menu">
+      <a href="main.html" class="menu-item"><i class="fa-solid fa-heart"></i> For You</a>
+      <a href="browse.html" class="menu-item"><i class="fa-solid fa-music"></i> Browse</a>
+
+      <h4 class="category-title">Library</h4>
+      <a href="recentlyadded.html" class="menu-item"><i class="fa-solid fa-clock-rotate-left"></i> Recently Added</a>
+      <a href="artists.html" class="menu-item"><i class="fa-solid fa-user"></i> Artists</a>
+      <a href="albums.html" class="menu-item"><i class="fa-solid fa-compact-disc"></i> Albums</a>
+
+      <h4 class="category-title">Playlists</h4>
+      <a href="playlists.html" class="menu-item"><i class="fa-solid fa-table-cells-large"></i> All Playlists</a>
+      <a href="favourites.html" class="menu-item"><i class="fa-solid fa-star"></i> Favourite Songs</a>
+      <a href="domiland.html" class="menu-item"><i class="fa-solid fa-list"></i> DomiLand</a>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="copyright">© Copyright 2025. All rights reserved.</div>
+  </div>
+</aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="controls">
+          <i class="fa-solid fa-shuffle"></i>
+          <i class="fa-solid fa-backward-step"></i>
+          <i class="fa-solid fa-play"></i>
+          <i class="fa-solid fa-forward-step"></i>
+          <i class="fa-solid fa-repeat"></i>
+        </div>
+
+        <div class="song-info">
+          <div class="song-title"></div>
+          <div class="song-artist"></div>
+        </div>
+
+
+        <div class="volume">
+          <i class="fa-solid fa-volume-high"></i>
+          <input type="range" min="0" max="100" value="80">
+        </div>
+
+        <div class="profile-container">
+          <button class="profile-btn" id="profileBtn">
+            <i class="fa-solid fa-user"></i>
+            <i class="fa-solid fa-caret-down"></i>
+          </button>
+          <div class="dropdown" id="dropdownMenu">
+            <a href="welcome.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+          </div>
+        </div>
+      </div>
+
+
+
+       <div class="playlist-container">
+        <div class="playlist-header">
+            <img src="https://store-033.blobstore.apple.com/sq-mq-us-033-000002/66/83/e3/6683e3ce-7957-e2bf-9c8e-25cd5c7b3767/image?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20251110T063919Z&X-Amz-SignedHeaders=host&X-Amz-Expires=86400&X-Amz-Credential=MKIAU0HKO2RBEAT0UMZS%2F20251110%2Fstore-033%2Fs3%2Faws4_request&X-Amz-Signature=21e8cf21d702abb3c7741b43245580edb11c3f2b31ab7b22517c9cabe29c22b2" alt="Playlist Cover" class="playlist-cover">
+            <div class="playlist-info">
+                <h1 class="playlist-title">DomiLand</h1>
+                <p class="updated">UPDATED 2 WEEKS AGO</p>
+                <div class="buttons">
+                    <button class="play-btn">▶ Play</button>
+                    <button class="shuffle-btn"> <i class="fa-solid fa-shuffle"></i>Shuffle</button>
+                </div>
+            </div>
+        </div>
+
+        <table class="song-table">
+            <thead>
+                <tr>
+                    <th>Song</th>
+                    <th>Artist</th>
+                    <th>Album</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/41/db/3e/41db3e56-15d6-7677-dba2-7b94e6dff740/195081197326.jpg/80x80bb.webp" class="song-cover"> B.I.D</td>
+                    <td>Markul</td>
+                    <td>B.I.D - Single</td>
+                    <td>3:12</td>
+                </tr>
+                <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/1a/64/ac/1a64ac23-02e6-72e9-2774-e64f09047a6f/cover.jpg/80x80bb.webp" class="song-cover"> 6AM в Будапеште</td>
+                    <td>OG BUDA</td>
+                    <td>Скучаю, Но Работаю</td>
+                    <td>3:06</td>
+                </tr>
+                <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/5e/f5/69/5ef569a3-f3ec-b8cf-f5df-e356a55f52d0/198846931487.jpg/80x80bb.webp" class="song-cover"> Первый Раз</td>
+                    <td>Markul</td>
+                    <td>MAKE DEPRESSION GREAT AGAIN</td>
+                    <td>2:44</td>
+                </tr>
+                <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/36/e3/8e/36e38e7e-94ec-dbcd-f23c-0890e1a9518f/22UM1IM44821.rgb.jpg/80x80bb.webp" class="song-cover"> Always</td>
+                    <td>Daniel Caesar</td>
+                    <td>NEVER ENOUGH</td>
+                    <td>3:45</td>
+                </tr>
+                <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/e8/04/c0/e804c0c0-9b41-5b95-47da-3279ca41ceb1/5034644617237.jpg/80x80bb.webp" class="song-cover"> DILEMMA (feat. Central Cee)</td>
+                    <td>Nemzzz</td>
+                    <td>RENT’S DUE (DELUXE)</td>
+                    <td>2:40</td>
+                </tr>
+                 <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Music114/v4/b1/52/c5/b152c569-f81f-4005-7b61-5b54b855564d/s06.hfdwpdak.jpg/80x80bb.webp" class="song-cover"> The Boy Is Mine</td>
+                    <td>Brandy & Monica</td>
+                    <td>The Boy Is Mine</td>
+                    <td>4:55</td>
+                </tr>
+                <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Video122/v4/dc/55/af/dc55af69-4c32-6321-a850-ae8fca9a53cf/Jobebdaf73a-dfa6-4aab-87f6-031ad56db0de-138468904-PreviewImage_preview_image_nonvideo_sdr-Time1667425732924.png/592x592bb.webp" class="song-cover">Justified</td>
+                    <td>Justin Timberlake</td>
+                    <td>Like I Love You</td>
+                    <td>4:44</td>
+                </tr>
+                <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Video112/v4/86/0f/33/860f3387-f151-e384-8133-edc400127ba7/Job3a03767a-4e74-4e27-9609-d51e0aa61c25-133900927-PreviewImage_preview_image_nonvideo_sdr-Time1657568421320.png/592x592bb.webp" class="song-cover">HEAL YOUR HEART(Interlude)</td>
+                    <td>Brent Faiyaz</td>
+                    <td>WASTELAND</td>
+                    <td>3:36</td>
+                </tr>
+                <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4c/59/9b/4c599b72-ea9c-19dd-7dc8-3d0c5e818da2/content_art_2FRAHGaJmcQWuP3P60wdgs_brent_cover_mock.jpg/80x80bb.webp" class="song-cover">First World Problemz/Nobody Carez</td>
+                    <td>Brent Faiyaz</td>
+                    <td>Sonder Son</td>
+                    <td>5:51</td>
+                </tr>
+                <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/99/bf/58/99bf58ab-a644-b2ae-e020-4aca79c3592c/886444594820.jpg/80x80bb.webp" class="song-cover">Jukebox Joints</td>
+                    <td>A$AP Rocky</td>
+                    <td>AT.LONG.LAST.A$AP</td>
+                    <td>5:24</td>
+                </tr>
+                  <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/dc/02/ef/dc02eff2-027c-a468-7d7b-aa9404e74f1a/mzi.mgytcnob.jpg/220x220bb.webp" class="song-cover">Heaven Can Wait</td>
+                    <td>Michael Jackson</td>
+                    <td>Invincible</td>
+                    <td>4:50</td>
+                </tr>
+                <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/cc/b0/7f/ccb07f0d-1530-00b0-244a-6332daffc2b9/dj.xnuhftrz.jpg/220x220bb.webp" class="song-cover">Rock With You</td>
+                    <td>Michael Jackson</td>
+                    <td>Off The Wall</td>
+                    <td>3:40</td>
+                </tr>
+                <tr>
+                    <td><img src="https://is1-ssl.mzstatic.com/image/thumb/Music126/v4/2b/c0/81/2bc081c8-25f0-ba43-d451-587a54613778/16UMGIM59202.rgb.jpg/220x220bb.webp" class="song-cover">Umbrella</td>
+                    <td>Rihanna(feat.Jay Z)</td>
+                    <td>Good Girl Gone Bad</td>
+                    <td>4:36</td>
+                </tr>
+            </tbody>
+            </tbody>
+        </table>
+    </div>
+
+      <script>
+    const dropdown = document.getElementById('dropdownMenu');
+    profileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    });
+    document.addEventListener('click', () => dropdown.style.display = 'none');
+</script>
