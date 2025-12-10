@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background-color: #0a0a0a;
+      color: white;
+      overflow: hidden;
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+  width: 230px;
+  background-color: #242424;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+  padding: 12px;
+}
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+
+    .search {
+      background-color: #333;
+      border: none;
+      color: #ccc;
+      padding: 8px 10px;
+      border-radius: 4px;
+      width: 100%;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  text-decoration: none;
+  color: white;
+  transition: background 0.15s;
+}
+.menu-item:hover {
+  background-color: #2f2f2f;
+}
+
+
+.menu-item i {
+  font-size: 18px;
+  width: 22px;
+  color: #007483; 
+}
+.category-title {
+  margin-top: 14px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: #c4c4c4;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.sidebar-footer {
+  padding-top: 6px;
+}
+
+.sidebar-footer .copyright {
+  font-size: 11px;
+  color: #aaaaaa;
+  text-align: center;
+  padding: 6px 0;
+}
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #171717;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #051923;
+      padding: 10px 20px;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .controls i {
+      font-size: 18px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .song-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      justify-content: center;
+    }
+
+    .song-title {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .song-artist {
+      font-size: 12px;
+      color: #b3b3b3;
+    }
+
+    .volume {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .volume input {
+      accent-color: white;
+    }
+
+    .search-bar {
+      background-color: #3f3e3e;
+      border: none;
+      height: 32px;
+      width: 180px;
+      border-radius: 4px;
+      padding: 0 8px;
+      color: white;
+    }
+
+    .profile-container {
+      position: relative;
+    }
+
+    .profile-btn {
+      background-color: #2e2e2e;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-weight: 500;
+    }
+
+    .profile-btn:hover {
+      background-color: #3d3d3d;
+    }
+
+    .profile-btn i {
+      font-size: 18px;
+    }
+
+    .dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 45px;
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      min-width: 160px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      overflow: hidden;
+      z-index: 20;
+    }
+
+    .dropdown a {
+      display: block;
+      color: white;
+      padding: 10px 14px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .dropdown a:hover {
+      background-color: #333;
+    }
+
+    .content {
+      padding: 20px 30px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+
+    .album-scroll {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      scrollbar-width: thin;
+      scroll-behavior: smooth;
+      padding-bottom: 10px;
+      scrollbar-color: #1a1a1a #121212;
+      scrollbar-width: none; 
+    }
+
+    .album-scroll::-webkit-scrollbar {
+      height: 0; 
+      background: transparent;
+    }
+
+    .album-scroll::-webkit-scrollbar-thumb {
+       background: transparent;
+    }
+
+    .album-card {
+      flex: 0 0 auto;
+      width: 220px;
+      background-color: #1f1f1f;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, background 0.25s;
+    }
+
+    .album-card:hover {
+      background-color: #2a2a2a;
+      transform: scale(1.05);
+    }
+
+    .album-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+
+    .album-info {
+      padding: 10px;
+    }
+
+    .album-title {
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .album-artist {
+      font-size: 13px;
+      color: #b3b3b3;
+    }
+
+    .scroll-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: rgba(0,0,0,0.5);
+      color: white;
+      border: none;
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 5;
+    }
+
+    .scroll-btn:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    .section:hover .scroll-btn {
+      opacity: 1;
+    }
+
+    .scroll-left {
+      left: -10px;
+    }
+
+    .scroll-right {
+      right: -10px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+      .search-bar {
+        width: 120px;
+      }
+      .album-card {
+        width: 160px;
+      }
+      .scroll-btn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+   <aside class="sidebar">
+  <div class="sidebar-top">
+    <input type="text" placeholder="Search" class="search" />
+
+    <div class="menu">
+      <a href="main.html" class="menu-item"><i class="fa-solid fa-heart"></i> For You</a>
+      <a href="categories.html" class="menu-item"><i class="fa-solid fa-music"></i> Browse</a>
+
+      <h4 class="category-title">Library</h4>
+      <a href="recentlyadded.html" class="menu-item"><i class="fa-solid fa-clock-rotate-left"></i> Recently Added</a>
+      <a href="artists.html" class="menu-item"><i class="fa-solid fa-user"></i> Artists</a>
+      <a href="albums.html" class="menu-item"><i class="fa-solid fa-compact-disc"></i> Albums</a>
+
+      <h4 class="category-title">Playlists</h4>
+      <a href="playlists.html" class="menu-item"><i class="fa-solid fa-table-cells-large"></i> All Playlists</a>
+      <a href="favourites.html" class="menu-item"><i class="fa-solid fa-star"></i> Favourite Songs</a>
+      <a href="domiland.html" class="menu-item"><i class="fa-solid fa-list"></i> DomiLand</a>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="copyright">© Copyright 2025. All rights reserved.</div>
+  </div>
+</aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="controls">
+          <i class="fa-solid fa-shuffle"></i>
+          <i class="fa-solid fa-backward-step"></i>
+          <i class="fa-solid fa-play"></i>
+          <i class="fa-solid fa-forward-step"></i>
+          <i class="fa-solid fa-repeat"></i>
+        </div>
+
+        <div class="song-info">
+          <div class="song-title"></div>
+          <div class="song-artist"></div>
+        </div>
+
+
+        <div class="volume">
+          <i class="fa-solid fa-volume-high"></i>
+          <input type="range" min="0" max="100" value="80">
+        </div>
+
+        <div class="profile-container">
+          <button class="profile-btn" id="profileBtn">
+            <i class="fa-solid fa-user"></i>
+            <i class="fa-solid fa-caret-down"></i>
+          </button>
+          <div class="dropdown" id="dropdownMenu">
+            <a href="#"><i class="fa-solid fa-user-circle"></i> Account</a>
+            <a href="welcome.html"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="content">
+        <div class="section">
+          <div class="section-title">Top Picks For You</div>
+          <button class="scroll-btn scroll-left"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="scroll-btn scroll-right"><i class="fa-solid fa-chevron-right"></i></button>
+         <div class="album-scroll">
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/29/e0/c0/29e0c0fd-62d2-bc55-f965-0b4d254140bb/199538400397.jpg/592x592bb.webp" alt="Falling In Love"><div class="album-info"><div class="album-title">Falling in Love</div><div class="album-artist">Markul</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/5b/28/cb/5b28cbdc-1dde-a1e3-0bb0-5789ebb2b890/085365652095.jpg/592x592bb.webp" alt="Do Not Disturb"><div class="album-info"><div class="album-title">DO NOT DISTURB</div><div class="album-artist">Nemzzz</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/00/8f/03/008f03b5-42ef-91af-7188-3099bad658ed/cover.jpg/592x592bb.webp" alt="ОБА"><div class="album-info"><div class="album-title">ОБА</div><div class="album-artist">MAYOT</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/d6/71/c7/d671c745-73be-2c8b-c21a-f1a51dad6881/198588659625.jpg/592x592bb.webp" alt="Ветрено / Холодно"><div class="album-info"><div class="album-title">Ветрено / Холодно</div><div class="album-artist">Markul</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/be/d7/1b/bed71bee-70af-e410-854d-c4d71ed7e680/cover.jpg/592x592bb.webp" alt="Qaragym-ai"><div class="album-info"><div class="album-title">Qaragym-ai</div><div class="album-artist">Sadraddin</div></div></div>
+
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/4b/cb/e2/4bcbe211-0d64-b87e-c5e5-e0316f08fdea/198588909973.jpg/592x592bf.webp" alt="stand by me"><div class="album-info"><div class="album-title">stand by me</div><div class="album-artist">hanbee</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/bb/00/09/bb0009b4-37e3-b924-b703-eb3d3a7f362d/196873402772.jpg/592x592bf.webp" alt="JACKBOYS 2"><div class="album-info"><div class="album-title">JACKBOYS 2</div><div class="album-artist">JACKBOYS & Travis Scott</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music122/v4/09/72/3b/09723b88-9b18-e466-7ae0-05a17688bb52/22UM1IM35114.rgb.jpg/592x592bf.webp" alt="HEROES & VILLIANS"><div class="album-info"><div class="album-title">HEROES & VILLAINS</div><div class="album-artist">Metro Boomin</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music112/v4/e8/0e/e9/e80ee9cd-d17c-2f92-9af7-4def06bbd146/cover.jpg/592x592bf.webp" alt="Конечная станция"><div class="album-info"><div class="album-title">Конечная станция</div><div class="album-artist">Markul</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/de/82/b9/de82b98d-56a1-e27b-10ea-46964f4585e4/196871714549.jpg/592x592bf.webp" alt="american dream"><div class="album-info"><div class="album-title">american dream</div><div class="album-artist">21 Savage</div></div></div>
+</div>
+        </div>
+
+        <div class="section">
+          <div class="section-title">New Releases</div>
+          <button class="scroll-btn scroll-left"><i class="fa-solid fa-chevron-left"></i></button>
+          <button class="scroll-btn scroll-right"><i class="fa-solid fa-chevron-right"></i></button>
+          <div class="album-scroll">
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/4a/12/d5/4a12d53b-437c-c8aa-2168-3ed3c425d17b/5034644787862.jpg/592x592bf.webp" alt="Rap God"><div class="album-info"><div class="album-title">Rap God</div><div class="album-artist">Sultaan</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/12/f7/d6/12f7d6aa-8ddf-81d9-7048-a910161675d0/8721416143717.png/592x592bf.webp" alt="Time Will Tell"><div class="album-info"><div class="album-title">Time Will Tell</div><div class="album-artist">Jordan Astra</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/3c/03/40/3c034047-16a8-5e69-706f-a3290eaf1cce/cover.jpg/592x592bf.webp" alt="Movements I"><div class="album-info"><div class="album-title">Movements I</div><div class="album-artist">Afenginn</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a5/c0/8f/a5c08fa4-c430-62b7-2023-2fc07b801d4d/5063817004390_cover.jpg/592x592bf.webp" alt="Fallout"><div class="album-info"><div class="album-title">Fallout</div><div class="album-artist">Inner Zone</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/80/54/11/80541122-c1c4-50ad-a673-ff79f4cf8aa7/196873555331.jpg/592x592bf.webp" alt="Deadbeat"><div class="album-info"><div class="album-title">Deadbeat</div><div class="album-artist">Tame Impala</div></div></div>
+
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a7/6f/f0/a76ff0f1-c117-eb0d-bbc1-9e14e3a2c1d4/5056556164463_cover.jpg/592x592bf.webp" alt=""><div class="album-info"><div class="album-title">All Systems Are Lying</div><div class="album-artist">Soulwax</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/a3/fa/e3/a3fae377-b569-b63e-d024-94e1c5e10f33/199350464911.jpg/592x592bf.webp" alt=""><div class="album-info"><div class="album-title">BLINK</div><div class="album-artist">Bob Moses</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/27/b4/f2/27b4f23c-1732-397f-fa12-7b11505af939/199350787386.jpg/592x592bf.webp" alt=""><div class="album-info"><div class="album-title">Oh Positive</div><div class="album-artist">Ghost Care</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/fe/9a/ba/fe9aba25-ae4e-1cfc-709f-f1c0fdfd964a/663918501528.jpg/592x592bf.webp" alt=""><div class="album-info"><div class="album-title">bbno$</div><div class="album-artist">bbno$</div></div></div>
+  <div class="album-card"><img src="https://is1-ssl.mzstatic.com/image/thumb/Music211/v4/a7/90/e9/a790e960-ed2c-f1a1-8bce-49c25441f150/8721416409318.png/592x592bf.webp" alt=""><div class="album-info"><div class="album-title">Beat Goes On</div><div class="album-artist">Bruno Martini</div></div></div>
+</div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdown = document.getElementById('dropdownMenu');
+    profileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+    });
+    document.addEventListener('click', () => dropdown.style.display = 'none');
+
+    document.querySelectorAll('.section').forEach(section => {
+      const scrollContainer = section.querySelector('.album-scroll');
+      const leftBtn = section.querySelector('.scroll-left');
+      const rightBtn = section.querySelector('.scroll-right');
+
+      leftBtn.addEventListener('click', () => {
+        scrollContainer.scrollBy({ left: -300, behavior: 'smooth' });
+      });
+
+      rightBtn.addEventListener('click', () => {
+        scrollContainer.scrollBy({ left: 300, behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>
